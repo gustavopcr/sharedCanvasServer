@@ -12,6 +12,7 @@ public class Server {
             System.out.println("Server started");
 
             while (true) {
+            	System.out.println("teste");
                 Socket clientSocket = serverSocket.accept();
                 clients.add(clientSocket);
 
@@ -42,7 +43,7 @@ public class Server {
         @Override
         public void run() {
             try {
-                byte[] buffer = new byte[1024]; // Adjust buffer size as needed
+                byte[] buffer = new byte[4*4]; // Adjust buffer size as needed
                 int bytesRead;
                 while ((bytesRead = inFromClient.read(buffer)) != -1) {
                     // Process received bytes (buffer) as needed
@@ -50,6 +51,7 @@ public class Server {
                     broadcast(buffer, bytesRead);
                 }
             } catch (IOException e) {
+            	//System.out.println("run");
                 e.printStackTrace();
             }
         }
@@ -59,9 +61,13 @@ public class Server {
             for (Socket socket : clients) {
                 try {
                     OutputStream outToClient = socket.getOutputStream();
+                    //System.out.println("outToClient");
                     outToClient.write(data, 0, length);
+                    //System.out.println("write");
                     outToClient.flush();
+                    //System.out.println("flush");
                 } catch (IOException e) {
+                	//System.out.println("broadcast");
                     e.printStackTrace();
                 }
             }
