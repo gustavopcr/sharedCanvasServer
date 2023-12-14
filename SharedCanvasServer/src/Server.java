@@ -6,7 +6,7 @@ import java.util.List;
 public class Server {
     private static List<Socket> clients = new ArrayList<>();
     public static ArrayList<byte[]> drawingsBytes = new ArrayList<>();
-    
+    public static String userList = "";
     public static void main(String[] args) {
         try {
             ServerSocket serverSocket = new ServerSocket(9999);
@@ -16,6 +16,7 @@ public class Server {
             	System.out.println("teste");
                 Socket clientSocket = serverSocket.accept();
                 clients.add(clientSocket);
+                userList += clientSocket.getInetAddress()+";";
                 // Start a thread to handle each client
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 //System.out.println("ip: " + clientHandler.getIP());
@@ -77,14 +78,16 @@ public class Server {
                 try {
                     OutputStream outToClient = socket.getOutputStream();
                     
-                    System.out.println(socket.getInetAddress());
+                    System.out.println(userList);
                     outToClient.write(data, 0, length);
                     //System.out.println("write");
                     outToClient.flush();
-                	DatagramSocket clientSocket = new DatagramSocket(); // Create a DatagramSocket
-                	String message = "Hello from UDP client!";
+                	DatagramSocket udpSocket = new DatagramSocket(); // Create a DatagramSocket
+                	String message = userList;
                     byte[] sendData = message.getBytes();
                     DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, socket.getInetAddress(), 9008);
+                    udpSocket.send(sendPacket);
+                    udpSocket.close();
                     //System.out.println("flush");
                 } catch (IOException e) {
                 	//System.out.println("broadcast");
